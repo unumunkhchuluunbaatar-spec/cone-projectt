@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Interactive 3D Cone</title>
+
+<style>
+
+body{
+font-family: Arial;
+text-align:center;
+background:#f0f0f0;
+}
+
+#container{
+width:100%;
+height:400px;
+}
+
+.slider{
+width:300px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Interactive Cone</h1>
+<p>Move the sliders to change the cone.</p>
+
+<div id="container"></div>
+
+<p>Radius: <span id="rValue">3</span></p>
+<input type="range" min="1" max="10" value="3" id="radius" class="slider">
+
+<p>Height: <span id="hValue">5</span></p>
+<input type="range" min="1" max="15" value="5" id="height" class="slider">
+
+<h2>Volume: <span id="volume"></span></h2>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+
+let scene = new THREE.Scene();
+
+let camera = new THREE.PerspectiveCamera(75, window.innerWidth/400, 0.1, 1000);
+
+let renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth,400);
+
+document.getElementById("container").appendChild(renderer.domElement);
+
+let geometry = new THREE.ConeGeometry(3,5,32);
+let material = new THREE.MeshNormalMaterial();
+
+let cone = new THREE.Mesh(geometry,material);
+
+scene.add(cone);
+
+camera.position.z = 15;
+
+function animate(){
+requestAnimationFrame(animate);
+cone.rotation.y += 0.01;
+renderer.render(scene,camera);
+}
+
+animate();
+
+function updateCone(){
+
+let r = document.getElementById("radius").value;
+let h = document.getElementById("height").value;
+
+document.getElementById("rValue").innerText = r;
+document.getElementById("hValue").innerText = h;
+
+cone.geometry.dispose();
+cone.geometry = new THREE.ConeGeometry(r,h,32);
+
+let volume = (1/3)*Math.PI*r*r*h;
+
+document.getElementById("volume").innerText = volume.toFixed(2);
+
+}
+
+document.getElementById("radius").oninput = updateCone;
+document.getElementById("height").oninput = updateCone;
+
+updateCone();
+
+</script>
+
+</body>
+</html>
